@@ -30,13 +30,13 @@ public final class PageRequestBuilder {
 	 */
 	public static PageRequest getPageRequest(Integer pageSize, Integer pageNumber, String sortingCriteria) {
 
-		Set<String> sortingFileds = new LinkedHashSet<>(Arrays.asList(StringUtils.split(StringUtils.defaultIfEmpty(sortingCriteria, ""), ",")));
+		Set<String> sortingFields = new LinkedHashSet<>(Arrays.asList(StringUtils.split(StringUtils.defaultIfEmpty(sortingCriteria, ""), ",")));
 
-		List<Order> sortingOrders = sortingFileds.stream().map(PageRequestBuilder::getOrder).collect(Collectors.toList());
+		List<Order> sortingOrders = sortingFields.stream().map(PageRequestBuilder::getOrder).collect(Collectors.toList());
 
-		Sort sort = sortingOrders.isEmpty() ? null : new Sort(sortingOrders);
+		Sort sort = sortingOrders.isEmpty() ? Sort.unsorted() : Sort.by(sortingOrders);
 
-		return new PageRequest(ObjectUtils.defaultIfNull(pageNumber, 1) - 1, ObjectUtils.defaultIfNull(pageSize, 20), sort);
+		return PageRequest.of(ObjectUtils.defaultIfNull(pageNumber, 1) - 1, ObjectUtils.defaultIfNull(pageSize, 20), sort);
 	}
 
 	private static Order getOrder(String value) {
@@ -54,7 +54,7 @@ public final class PageRequestBuilder {
 
 	public static PageRequest getPageRequest(Map<String, String> filters) {
 		Integer pageSize = null, pageNumber = null;
-		String sortingCriteria = "id";
+		String sortingCriteria = null;
 
 		if (filters.containsKey("size")) {
 			pageSize = Integer.valueOf(filters.get("size").toString());
@@ -67,6 +67,7 @@ public final class PageRequestBuilder {
 		if (filters.containsKey("sort")) {
 			sortingCriteria = filters.get("sort").toString();
 		}
+
 		return getPageRequest(pageSize, pageNumber, sortingCriteria);
 	}
 }
