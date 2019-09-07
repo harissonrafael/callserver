@@ -20,6 +20,10 @@ import com.example.hr.callserver.model.Call;
 import com.example.hr.callserver.request.RequestCreateCall;
 import com.example.hr.callserver.service.CallService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(tags = "Caller")
 @RestController
 @RequestMapping(value = "/callers")
 public class CallController {
@@ -32,16 +36,19 @@ public class CallController {
 		this.service = service;
 	}
 
+	@ApiOperation(value = "Get the list of callers can be used filter by type")
 	@GetMapping
 	public ResponseEntity<Page<Call>> findAll(@RequestParam(required = false) Map<String, String> filters) {
 		return new ResponseEntity<Page<Call>>(service.findAll(filters), HttpStatus.OK);
 	}
 
+	@ApiOperation(value = "Add one or more call")
 	@PostMapping
 	public ResponseEntity<List<Call>> create(@RequestBody RequestCreateCall requestCreateCall) {
 		return new ResponseEntity<List<Call>>(service.create(requestCreateCall), HttpStatus.CREATED);
 	}
 
+	@ApiOperation(value = "Delete call by id")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		service.delete(id);
