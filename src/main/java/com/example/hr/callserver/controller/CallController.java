@@ -1,5 +1,6 @@
 package com.example.hr.callserver.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.hr.callserver.model.Call;
+import com.example.hr.callserver.model.to.StatisticsTO;
 import com.example.hr.callserver.request.RequestCreateCall;
 import com.example.hr.callserver.service.CallService;
 
@@ -36,7 +38,7 @@ public class CallController {
 		this.service = service;
 	}
 
-	@ApiOperation(value = "Get the list of callers can be used filter by type")
+	@ApiOperation(value = "Get the list of callers. Can be used filter by type")
 	@GetMapping
 	public ResponseEntity<Page<Call>> findAll(@RequestParam(required = false) Map<String, String> filters) {
 		return new ResponseEntity<Page<Call>>(service.findAll(filters), HttpStatus.OK);
@@ -53,6 +55,12 @@ public class CallController {
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		service.delete(id);
 		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@ApiOperation(value = "Get statistics of callers. Can be used filter by type")
+	@GetMapping(value = "/statistics")
+	public ResponseEntity<Map<LocalDate, StatisticsTO>> statistics(@RequestParam(required = false) Map<String, String> filters) {
+		return new ResponseEntity<Map<LocalDate, StatisticsTO>>(service.getStatistics(filters), HttpStatus.OK);
 	}
 
 }
