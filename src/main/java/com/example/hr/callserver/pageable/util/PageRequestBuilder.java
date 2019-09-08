@@ -15,6 +15,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 
 public final class PageRequestBuilder {
+	
+	private static final int DEFAULT_PAGE_SIZE = 10;
 
 	private PageRequestBuilder() {
 		// Do nothing
@@ -36,7 +38,7 @@ public final class PageRequestBuilder {
 
 		Sort sort = sortingOrders.isEmpty() ? Sort.unsorted() : Sort.by(sortingOrders);
 
-		return PageRequest.of(ObjectUtils.defaultIfNull(pageNumber, 1) - 1, ObjectUtils.defaultIfNull(pageSize, 20), sort);
+		return PageRequest.of(ObjectUtils.defaultIfNull(pageNumber, 1) - 1, ObjectUtils.defaultIfNull(pageSize, DEFAULT_PAGE_SIZE), sort);
 	}
 
 	private static Order getOrder(String value) {
