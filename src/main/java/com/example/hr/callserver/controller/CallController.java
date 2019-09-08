@@ -1,6 +1,5 @@
 package com.example.hr.callserver.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -61,8 +60,8 @@ public class CallController {
 
 	@ApiOperation(value = "Get statistics of callers. Can be used filter by type")
 	@GetMapping(value = "/statistics")
-	public ResponseEntity<Map<LocalDate, StatisticsTO>> statistics(@RequestParam(required = false) Map<String, String> filters) {
-		return new ResponseEntity<Map<LocalDate, StatisticsTO>>(service.getStatistics(filters), HttpStatus.OK);
+	public ResponseEntity<List<StatisticsTO>> statistics(@RequestParam(required = false) Map<String, String> filters) {
+		return new ResponseEntity<List<StatisticsTO>>(service.getStatistics(filters), HttpStatus.OK);
 	}
 
 }

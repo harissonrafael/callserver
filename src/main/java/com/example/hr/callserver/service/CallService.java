@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class CallService {
 		repository.deleteById(id);
 	}
 
-	public Map<LocalDate, StatisticsTO> getStatistics(Map<String, String> filters) {
+	public List<StatisticsTO> getStatistics(Map<String, String> filters) {
 		Map<LocalDate, StatisticsTO> map = new HashMap<LocalDate, StatisticsTO>();
 		List<Call> listAll = repository.findAllByOrderByStartAsc();
 
@@ -68,13 +69,13 @@ public class CallService {
 			LocalDate currentDay = c.getStart().toLocalDate();
 
 			if (map.get(currentDay) == null) {
-				map.put(currentDay, calculateValues(new StatisticsTO(), c));
+				map.put(currentDay, calculateValues(new StatisticsTO(currentDay), c));
 			} else {
 				map.put(currentDay, calculateValues(map.get(currentDay), c));
 			}
 		});
 
-		return map;
+		return new ArrayList(map.values());
 	}
 
 	private StatisticsTO calculateValues(StatisticsTO statisticsTO, Call call) {
