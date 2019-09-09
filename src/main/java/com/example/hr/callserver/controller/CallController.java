@@ -60,8 +60,8 @@ public class CallController {
 
 	@ApiOperation(value = "Get statistics of callers. Can be used filter by type")
 	@GetMapping(value = "/statistics")
-	public ResponseEntity<List<StatisticsTO>> statistics(@RequestParam(required = false) Map<String, String> filters) {
-		return new ResponseEntity<List<StatisticsTO>>(service.getStatistics(filters), HttpStatus.OK);
+	public ResponseEntity<StatisticsTO> statistics() {
+		return new ResponseEntity<StatisticsTO>(service.getStatistics(), HttpStatus.OK);
 	}
 
 }
