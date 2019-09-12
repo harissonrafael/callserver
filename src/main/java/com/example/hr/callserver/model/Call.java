@@ -1,5 +1,6 @@
 package com.example.hr.callserver.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -17,7 +18,9 @@ import javax.validation.constraints.Size;
 import com.example.hr.callserver.model.enums.CallType;
 
 @Entity
-public class Call {
+public class Call implements Serializable {
+
+	private static final long serialVersionUID = 346089085716052969L;
 
 	@Id
 	@Column

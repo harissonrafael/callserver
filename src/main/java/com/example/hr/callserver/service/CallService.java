@@ -17,6 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.example.hr.callserver.cache.CallCacheUtils;
+import com.example.hr.callserver.cache.PageCallCacheUtils;
 import com.example.hr.callserver.model.Call;
 import com.example.hr.callserver.model.enums.CallType;
 import com.example.hr.callserver.model.to.StatisticsDayTO;
@@ -38,6 +40,10 @@ public class CallService {
 	}
 
 	public Page<Call> findAll(Map<String, String> filters) {
+		if (PageCallCacheUtils.get(filters) != null) {
+			return PageCallCacheUtils.get(filters);
+		}
+
 		PageRequest pageRequest = PageRequestBuilder.getPageRequest(filters);
 
 		CallType type = null;
@@ -48,19 +54,26 @@ public class CallService {
 
 		Specification<Call> specifications = Specification.where(type != null ? CallSpecification.getType(type) : null);
 
-		return repository.findAll(specifications, pageRequest);
+		PageCallCacheUtils.put(filters, repository.findAll(specifications, pageRequest));
+
+		return PageCallCacheUtils.get(filters);
 	}
 
 	public List<Call> create(RequestCreateCall requestCreateCall) {
-		return repository.saveAll(requestCreateCall.getCalls());
-	}
+		List<Call> list = repository.saveAll(requestCreateCall.getCalls());
 
-	public List<Call> saveAll(List<Call> call) {
-		return (List<Call>) repository.saveAll(call);
+		list.forEach((c) -> {
+			CallCacheUtils.put(c.getId(), c);
+		});
+
+		PageCallCacheUtils.clear();
+
+		return list;
 	}
 
 	public void delete(Long id) {
 		repository.deleteById(id);
+		PageCallCacheUtils.clear();
 	}
 
 	public StatisticsTO getStatistics() {
@@ -130,7 +143,6 @@ public class CallService {
 				map.put(currentDay, calculateValues(map.get(currentDay), c, listCallerNumber, listCalleeNumber, listDay, statisticTO));
 			}
 		});
-
 
 		statisticTO.setListStatisticsDayTO(new ArrayList<StatisticsDayTO>(map.values()));
 
